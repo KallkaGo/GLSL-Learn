@@ -78,6 +78,18 @@ float rect(vec2 pt, vec2 size ,vec2 center){
     return hor * ver;
 }
 
+float sweep(vec2 pt ,vec2 center,float radius,float line_width,float edge_thickness){
+    vec2 d = pt -center;
+    float theta = uTime *2.0;
+    vec2 p =vec2(cos(theta),-sin(theta)) *radius;
+    // 计算向量 d 在向量 p 上的投影长度与p的模的比值，将这个比值 h 限制在 0 到 1 的范围内，确保线段长度不会超过圆的半径。
+    float h = clamp(dot(d,p)/dot(p,p),0.,1.);
+    /* 点 d到线段p的垂直距离 */
+    float l =length(d-p*h);
+    /* 反转结果 当l在线宽内为1 在线宽外为0 线宽到线宽边缘呈线性过渡 */
+    return 1.0 - smoothstep(line_width,line_width+edge_thickness,l);
+}
+
 
 
 mat2 getRotationMatrix(float theta){
@@ -421,7 +433,15 @@ void main()
     // gl_FragColor = vec4(vec3(color),1.0);
 
     /* 平行线 */
-    vec3 color = vec3(1.0) * line(vUv.x,0.5,0.05,0.002)+vec3(1.0) * line(vUv.y,0.5,0.05,0.002);
+    // vec3 color = vec3(1.0) * line(vUv.x,0.5,0.05,0.002)+vec3(1.0) * line(vUv.y,0.5,0.05,0.002);
+    // gl_FragColor = vec4(vec3(color),1.0);
+
+
+    /* 雷达 */
+    vec3 color = vec3(1.0) * line(vUv.x,0.5,0.002,0.001)+ vec3(1.0) * line(vUv.y,0.5,0.002,0.001)+vec3(1.0) * Linecircle(vUv,vec2(0.5),0.4,0.002);
+    color+= vec3(1.0) * Linecircle(vUv,vec2(0.5),0.3,0.002);
+    color+=vec3(1.0) * Linecircle(vUv,vec2(0.5),0.2,0.002);
+    color+=sweep(vUv,vec2(0.5),0.4,0.003,0.001) * vec3(0.1,0.3,1.0);
     gl_FragColor = vec4(vec3(color),1.0);
 
 
