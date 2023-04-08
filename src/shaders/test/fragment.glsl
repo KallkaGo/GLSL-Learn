@@ -86,8 +86,20 @@ float sweep(vec2 pt ,vec2 center,float radius,float line_width,float edge_thickn
     float h = clamp(dot(d,p)/dot(p,p),0.,1.);
     /* 点 d到线段p的垂直距离 */
     float l =length(d-p*h);
+
+    float gradient = 0.0;
+    const float gradient_angle = PI*1.2;
+      // 判断当前像素点是否在圆形内部
+   if(length(d)<radius){
+     // 计算当前像素点与圆心的夹角
+    float angle = mod(theta+atan(d.y,d.x),PI*2.0);
+   // 将夹角与预设的角度进行比较，然后将比较结果规范化并返回
+    gradient =clamp(gradient_angle -angle,0.0,gradient_angle)/gradient_angle *0.5;
+    
+}
+
     /* 反转结果 当l在线宽内为1 在线宽外为0 线宽到线宽边缘呈线性过渡 */
-    return 1.0 - smoothstep(line_width,line_width+edge_thickness,l);
+    return gradient+ 1.0 - smoothstep(line_width,line_width+edge_thickness,l);
 }
 
 
