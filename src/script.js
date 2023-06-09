@@ -1,8 +1,9 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
-import testVertexShader from './shaders/test/vertex.glsl'
-import testFragmentShader from './shaders/test/fragment.glsl'
+import testVertexShader from './shaders/vertex.glsl'
+import testFragmentShader from './shaders/fragment.glsl'
+import fragmentShader from './shaders/fragment_1.glsl'
 
 /**
  * Base
@@ -16,19 +17,33 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
+/* 
+Loader
+*/
+const textureLoader = new THREE.TextureLoader()
+
+const texture = textureLoader.load('bg2.png')
+
+
 /**
  * Test mesh
  */
 // Geometry
 const geometry = new THREE.PlaneGeometry(2, 2, 32, 32)
 
+const iResolution = new THREE.Vector3(innerWidth,innerHeight,innerWidth/innerHeight)
+
+
 // Material
 const material = new THREE.ShaderMaterial({
     vertexShader: testVertexShader,
-    fragmentShader: testFragmentShader,
+    fragmentShader: fragmentShader,
     side: THREE.DoubleSide,
     uniforms:{
-        uTime:{value:0}
+        uTime:{value:0},
+        iTime:{value:0},
+        iResolution:{value:iResolution},
+        iChannel0:{value:texture}
     }
 })
 
@@ -93,6 +108,7 @@ const tick = () =>
 
     // Update uTime
     material.uniforms.uTime.value = clock.getElapsedTime()
+    material.uniforms.iTime.value = clock.getElapsedTime()
 
     // Render
     renderer.render(scene, camera)
