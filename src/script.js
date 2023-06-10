@@ -24,6 +24,8 @@ const textureLoader = new THREE.TextureLoader()
 
 const texture = textureLoader.load('bg2.png')
 
+const texture2 = textureLoader.load('test.png')
+
 
 /**
  * Test mesh
@@ -43,8 +45,11 @@ const material = new THREE.ShaderMaterial({
         uTime:{value:0},
         iTime:{value:0},
         iResolution:{value:iResolution},
-        iChannel0:{value:texture}
-    }
+        iChannel0:{value:texture},
+        iChannel1:{value:texture2}
+    },
+    transparent:true,
+    depthWrite:false
 })
 
 // Mesh
@@ -92,9 +97,10 @@ controls.enableDamping = true
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas
 })
-renderer.autoClear = false
+// renderer.autoClear = false
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+renderer.setClearColor('black')
 
 /**
  * Animate
