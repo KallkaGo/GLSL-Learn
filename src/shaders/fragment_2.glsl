@@ -133,6 +133,7 @@ void main() {
   vec4 bg = texture2D(iChannel1, vUv);
 
   float discardValue = 0.95;
+  //类似unity的clip clip(x) 当x< 0 裁减掉画面 否则则不裁剪
   if(noiseValue.r < discardValue && noiseValue.g < discardValue && noiseValue.b < discardValue) {
     gl_FragColor = vec4(noiseValue + bg.rgb, 1.0);
   } else {
