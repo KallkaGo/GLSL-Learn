@@ -2,9 +2,12 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
 import testVertexShader from './shaders/vertex.glsl'
+import vertexShader from './shaders/vertex.glsl'
 import testFragmentShader from './shaders/fragment.glsl'
 // import fragmentShader from './shaders/fragment_1.glsl'
 import fragmentShader from './shaders/fragment_2.glsl'
+
+import flowFragmen from './shaders/flowmiss.glsl'
 
 /**
  * Base
@@ -17,6 +20,10 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
+
+
+
+const worldSpcaeCameraPos = new THREE.Vector3()
 
 /* 
 Loader
@@ -34,7 +41,7 @@ const texture2 = textureLoader.load('test.png')
 // Geometry
 const geometry = new THREE.PlaneGeometry(2, 2, 32, 32)
 
-const iResolution = new THREE.Vector3(innerWidth,innerHeight,innerWidth/innerHeight)
+const iResolution = new THREE.Vector3(innerWidth, innerHeight, innerWidth / innerHeight)
 
 
 // Material
@@ -42,20 +49,40 @@ const material = new THREE.ShaderMaterial({
     vertexShader: testVertexShader,
     fragmentShader: fragmentShader,
     side: THREE.DoubleSide,
-    uniforms:{
-        uTime:{value:0},
-        iTime:{value:0},
-        iResolution:{value:iResolution},
-        iChannel0:{value:texture},
-        iChannel1:{value:texture2}
+    uniforms: {
+        uTime: { value: 0 },
+        iTime: { value: 0 },
+        iResolution: { value: iResolution },
+        iChannel0: { value: texture },
+        iChannel1: { value: texture2 }
     },
-    transparent:true,
-    depthWrite:false
+    transparent: true,
+    depthWrite: false
 })
+
+const shaderMaterial = new THREE.ShaderMaterial({
+    vertexShader,
+    fragmentShader:flowFragmen,
+    uniforms: {
+        uCameraPos: { value: worldSpcaeCameraPos }
+    },
+    transparent: true,
+    blending: THREE.AdditiveBlending
+})
+
+
+const cubeGeometry = new THREE.BoxGeometry(1, 1, 1, 320, 320, 320)
 
 // Mesh
 const mesh = new THREE.Mesh(geometry, material)
-scene.add(mesh)
+
+const cube = new THREE.Mesh(cubeGeometry, shaderMaterial)
+
+mesh.position.set(0,0,-2)
+
+cube.position.set(0, 0, 0.2)
+
+scene.add(mesh, cube)
 
 /**
  * Sizes
@@ -65,8 +92,7 @@ const sizes = {
     height: window.innerHeight
 }
 
-window.addEventListener('resize', () =>
-{
+window.addEventListener('resize', () => {
     // Update sizes
     sizes.width = window.innerWidth
     sizes.height = window.innerHeight
@@ -101,21 +127,23 @@ const renderer = new THREE.WebGLRenderer({
 // renderer.autoClear = false
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-renderer.setClearColor('ivory')
+// renderer.setClearColor('ivory')
 
 /**
  * Animate
  */
 const clock = new THREE.Clock()
 
-const tick = () =>
-{
+const tick = () => {
     // Update controls
     controls.update()
 
     // Update uTime
     material.uniforms.uTime.value = clock.getElapsedTime()
     material.uniforms.iTime.value = clock.getElapsedTime()
+
+    worldSpcaeCameraPos.setFromMatrixPosition(camera.matrixWorld)
+    cube.material.uniforms.uCameraPos.value = worldSpcaeCameraPos
 
     // Render
     renderer.render(scene, camera)
