@@ -1,19 +1,30 @@
 varying vec3 normal_pos;
-varying vec3 pos_world;
-uniform vec3 uCameraPos;
+varying vec3 modelToCameraDir;
+varying vec2 vUv;
+uniform sampler2D uTex;
+uniform float uTime;
+
 void main() {
-  vec3 normalWorld = normalize(normal_pos);
-  vec3 viewWorld = normalize(uCameraPos - pos_world);
-  float NdotV = clamp(dot(normalWorld, viewWorld), 0., 1.);
+  vec3 dir = normalize(modelToCameraDir);
+  vec3 nor = normalize(normal_pos);
+  float NdotV = clamp(dot(dir, nor), 0., 1.);
   float alpha = 1. - NdotV;
-  float emiss = 1.5;
+  float emiss = 3.;
 
-
-  float fresnel = clamp(pow(alpha, emiss),0.,1.);
+  float fresnel = pow(alpha, emiss);
 
   vec3 col = vec3(1., 1., 0.);
 
-  vec4 color = vec4(col, fresnel);
+  vec2 nuv = vUv;
+
+  float instensity = 2.;
+
+  nuv.y = fract(nuv.y + uTime * .3);
+
+  vec4 tex = texture2D(uTex, nuv);
+
+
+  vec4 color = vec4(tex.rbg * col * instensity, fresnel);
 
   gl_FragColor = color;
 

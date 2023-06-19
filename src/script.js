@@ -34,6 +34,8 @@ const texture = textureLoader.load('bg2.png')
 
 const texture2 = textureLoader.load('test.png')
 
+const noise = textureLoader.load('noise.png')
+
 
 /**
  * Test mesh
@@ -62,23 +64,24 @@ const material = new THREE.ShaderMaterial({
 
 const shaderMaterial = new THREE.ShaderMaterial({
     vertexShader,
-    fragmentShader:flowFragmen,
+    fragmentShader: flowFragmen,
     uniforms: {
-        uCameraPos: { value: worldSpcaeCameraPos }
+        uTex:{value:noise},
+        uTime:{value:0}
     },
     transparent: true,
     blending: THREE.AdditiveBlending
 })
 
 
-const cubeGeometry = new THREE.BoxGeometry(1, 1, 1, 320, 320, 320)
+const sphereGeometry = new THREE.SphereGeometry(1)
 
 // Mesh
 const mesh = new THREE.Mesh(geometry, material)
 
-const cube = new THREE.Mesh(cubeGeometry, shaderMaterial)
+const cube = new THREE.Mesh(sphereGeometry, shaderMaterial)
 
-mesh.position.set(0,0,-2)
+mesh.position.set(0, 0, -2)
 
 cube.position.set(0, 0, 0.2)
 
@@ -111,7 +114,7 @@ window.addEventListener('resize', () => {
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.set(0.25, - 0.25, 1)
+camera.position.set(0.25, - 0.25, 3)
 scene.add(camera)
 
 // Controls
@@ -135,15 +138,16 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 const clock = new THREE.Clock()
 
 const tick = () => {
+    const elapsedTime = clock.getElapsedTime()
+
     // Update controls
     controls.update()
 
     // Update uTime
-    material.uniforms.uTime.value = clock.getElapsedTime()
-    material.uniforms.iTime.value = clock.getElapsedTime()
+    material.uniforms.uTime.value = elapsedTime
+    material.uniforms.iTime.value = elapsedTime
 
-    worldSpcaeCameraPos.setFromMatrixPosition(camera.matrixWorld)
-    cube.material.uniforms.uCameraPos.value = worldSpcaeCameraPos
+    shaderMaterial.uniforms.uTime.value = elapsedTime
 
     // Render
     renderer.render(scene, camera)
