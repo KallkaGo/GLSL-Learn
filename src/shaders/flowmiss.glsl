@@ -23,8 +23,9 @@ void main() {
 
   vec4 tex = texture2D(uTex, nuv);
 
+  col = vec3(clamp(tex.rbg * col * instensity,0.,1.));
 
-  vec4 color = vec4(tex.rbg * col * instensity, fresnel);
+  vec4 color = vec4(col, fresnel);
 
   gl_FragColor = color;
 
