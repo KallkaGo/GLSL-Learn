@@ -5,7 +5,7 @@ import testVertexShader from './shaders/vertex.glsl'
 import vertexShader from './shaders/vertex.glsl'
 import testFragmentShader from './shaders/fragment.glsl'
 // import fragmentShader from './shaders/fragment_1.glsl'
-import fragmentShader from './shaders/fragment_2.glsl'
+import fragmentShader from './shaders/dissolve.glsl'
 
 import flowFragmen from './shaders/flowmiss.glsl'
 
@@ -14,6 +14,12 @@ import flowFragmen from './shaders/flowmiss.glsl'
  */
 // Debug
 const gui = new dat.GUI()
+
+const params ={
+    clipFactor:0
+}
+
+
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -30,11 +36,15 @@ Loader
 */
 const textureLoader = new THREE.TextureLoader()
 
-const texture = textureLoader.load('bg2.png')
+// const texture = textureLoader.load('bg2.png')
 
 const texture2 = textureLoader.load('test.png')
 
-const noise = textureLoader.load('noise.png')
+// const noise = textureLoader.load('noise.png')
+
+const dissolveTex = textureLoader.load('dissolveTex.png')
+
+const RamTex = textureLoader.load('dissolveRamp.png')
 
 
 /**
@@ -55,18 +65,25 @@ const material = new THREE.ShaderMaterial({
         uTime: { value: 0 },
         iTime: { value: 0 },
         iResolution: { value: iResolution },
-        iChannel0: { value: texture },
-        iChannel1: { value: texture2 }
+        iChannel0: { value: null },
+        iChannel1: { value: texture2 },
+        iDissloveTex:{value:dissolveTex},
+        iClip:{value:0},
+        iRamTex:{value:RamTex}
     },
     transparent: true,
     depthWrite: false
+})
+
+gui.add(params,'clipFactor').min(0).max(1).step(0.01).name('溶解因子').onChange(()=>{
+    material.uniforms.iClip.value = params.clipFactor
 })
 
 const shaderMaterial = new THREE.ShaderMaterial({
     vertexShader,
     fragmentShader: flowFragmen,
     uniforms: {
-        uTex:{value:noise},
+        uTex:{value:null},
         uTime:{value:0}
     },
     transparent: true,
@@ -85,7 +102,7 @@ mesh.position.set(0, 0, -2)
 
 cube.position.set(0, 0, 0.2)
 
-scene.add(mesh, cube)
+scene.add(mesh)
 
 /**
  * Sizes
@@ -130,7 +147,7 @@ const renderer = new THREE.WebGLRenderer({
 // renderer.autoClear = false
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-// renderer.setClearColor('ivory')
+renderer.setClearColor('ivory')
 
 /**
  * Animate

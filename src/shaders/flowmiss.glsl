@@ -9,7 +9,7 @@ void main() {
   vec3 nor = normalize(normal_pos);
   float NdotV = clamp(dot(dir, nor), 0., 1.);
   float alpha = 1. - NdotV;
-  float emiss = 3.;
+  float emiss = 3.5;
 
   float fresnel = pow(alpha, emiss);
 
