@@ -1,15 +1,15 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
-import testVertexShader from './shaders/vertex.glsl'
+// import testVertexShader from './shaders/vertex.glsl'
 import vertexShader from './shaders/vertex.glsl'
 import filmEffectFrag from './shaders/filmEffect.glsl'
-import testFragmentShader from './shaders/fragment.glsl'
+// import testFragmentShader from './shaders/fragment.glsl'
 // import fragmentShader from './shaders/fragment_1.glsl'
-import fragmentShader from './shaders/dissolve.glsl'
+// import fragmentShader from './shaders/dissolve.glsl'
 
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
-import flowFragmen from './shaders/flowmiss.glsl'
+import flowFrag from './shaders/flowmiss.glsl'
 
 /**
  * Base
@@ -33,8 +33,6 @@ const scene = new THREE.Scene()
 
 
 
-const worldSpcaeCameraPos = new THREE.Vector3()
-
 /* 
 Loader
 */
@@ -46,10 +44,14 @@ const textureLoader = new THREE.TextureLoader()
 
 // const noise = textureLoader.load('noise.png')
 
+/* Disslove */
+
 // const dissolveTex = textureLoader.load('dissolveTex.png')
 
 // const RamTex = textureLoader.load('dissolveRamp.png')
 
+
+/* MatCap */
 const Matcap = textureLoader.load('/beetle/matcap_glass02.png')
 const MatcapAdd = textureLoader.load('/beetle/matcap_glass.png')
 const Diffuse = textureLoader.load('/beetle/beetle_diffuse.jpg')
@@ -82,17 +84,12 @@ fbxloader.load('./beetle/beetle.FBX', (model) => {
             }
         }
     })
-    console.log(model)
-    model.name = 'beetle'
     model.scale.setScalar(0.01)
     scene.add(model)
 })
 
 
-// const directionLight = new THREE.DirectionalLight('white', 0.1)
-// directionLight.position.set(6, 4, 5)
-// scene.add(directionLight)
-
+/* Light */
 
 const ambientlight = new THREE.AmbientLight('gray', 0.1)
 scene.add(ambientlight)
@@ -131,7 +128,7 @@ const iResolution = new THREE.Vector3(innerWidth, innerHeight, innerWidth / inne
 
 const shaderMaterial = new THREE.ShaderMaterial({
     vertexShader,
-    fragmentShader: flowFragmen,
+    fragmentShader: flowFrag,
     uniforms: {
         uTex: { value: null },
         uTime: { value: 0 }
@@ -192,7 +189,8 @@ controls.enableDamping = true
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
+    canvas: canvas,
+    antialias:true
 })
 // renderer.autoClear = false
 renderer.setSize(sizes.width, sizes.height)
