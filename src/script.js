@@ -3,6 +3,10 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
 // import testVertexShader from './shaders/vertex.glsl'
 import vertexShader from './shaders/vertex.glsl'
+import viceVertex from './shaders/vice_vertex.glsl'
+import viceFrag from './shaders/vice_frag.glsl'
+
+
 import filmEffectFrag from './shaders/filmEffect.glsl'
 // import testFragmentShader from './shaders/fragment.glsl'
 // import fragmentShader from './shaders/fragment_1.glsl'
@@ -20,7 +24,15 @@ const gui = new dat.GUI()
 const params = {
     clipFactor: 0,
     matcapIntensity: 4.84,
-    matcapAddIntensity:0.67
+    matcapAddIntensity: 0.67,
+    grow: 0,
+    growMin: 0.6,
+    growMax: 1.35,
+    endMin: 0.5,
+    endMax: 1.0,
+    expand: 0,
+    scale: 1.5
+
 }
 
 
@@ -52,41 +64,95 @@ const textureLoader = new THREE.TextureLoader()
 
 
 /* MatCap */
-const Matcap = textureLoader.load('/beetle/matcap_glass02.png')
-const MatcapAdd = textureLoader.load('/beetle/matcap_glass.png')
-const Diffuse = textureLoader.load('/beetle/beetle_diffuse.jpg')
-const RamTex = textureLoader.load('/beetle/ramp2.png')
+// const Matcap = textureLoader.load('/beetle/matcap_glass02.png')
+// const MatcapAdd = textureLoader.load('/beetle/matcap_glass.png')
+// const Diffuse = textureLoader.load('/beetle/beetle_diffuse.jpg')
+// const RamTex = textureLoader.load('/beetle/ramp2.png')
 
-const bettleShaderMaterial = new THREE.ShaderMaterial({
-    vertexShader,
-    fragmentShader: filmEffectFrag,
+// const bettleShaderMaterial = new THREE.ShaderMaterial({
+//     vertexShader,
+//     fragmentShader: filmEffectFrag,
+//     uniforms: {
+//         uMatcap: { value: Matcap },
+//         uMatcapAdd:{value:MatcapAdd},
+//         uDiffuse:{value:Diffuse},
+//         uRamTex:{value:RamTex},
+//         uMatcapIntensity: { value: params.matcapIntensity },
+//         uMatcapAddIntensity:{value:params.matcapAddIntensity}
+//     }
+// })
+
+// gui.add(params, 'matcapIntensity').min(0.1).max(5).step(0.01).onChange((value) => bettleShaderMaterial.uniforms.uMatcapIntensity.value = value)
+// gui.add(params, 'matcapAddIntensity').min(0).max(5).step(0.01).onChange((value) => bettleShaderMaterial.uniforms.uMatcapAddIntensity.value = value)
+
+
+
+// const fbxloader = new FBXLoader()
+// fbxloader.load('./beetle/beetle.FBX', (model) => {
+//     model.traverse((e) => {
+//         if (e.type === 'Mesh' && Array.isArray(e.material)) {
+//             for (let i = 0; i < e.material.length; i++) {
+//                 e.material[i] = bettleShaderMaterial
+//             }
+//         }
+//     })
+//     model.scale.setScalar(0.01)
+//     scene.add(model)
+// })
+
+
+
+const Diffuse = textureLoader.load('/vice/Base_color.png')
+
+
+const viceShaderMaterial = new THREE.ShaderMaterial({
+    vertexShader: viceVertex,
+    fragmentShader: viceFrag,
+    side: THREE.DoubleSide,
     uniforms: {
-        uMatcap: { value: Matcap },
-        uMatcapAdd:{value:MatcapAdd},
-        uDiffuse:{value:Diffuse},
-        uRamTex:{value:RamTex},
-        uMatcapIntensity: { value: params.matcapIntensity },
-        uMatcapAddIntensity:{value:params.matcapAddIntensity}
+        uDiffuse: { value: Diffuse },
+        uGrow: { value: params.grow },
+        uGrowMin: { value: params.growMin },
+        uGrowMax: { value: params.growMax },
+        uEndMin: { value: params.endMin },
+        uEndMax: { value: params.endMax },
+        uExpand: { value: params.expand },
+        uScale: { value: params.scale },
     }
 })
 
-gui.add(params, 'matcapIntensity').min(0.1).max(5).step(0.01).onChange((value) => bettleShaderMaterial.uniforms.uMatcapIntensity.value = value)
-gui.add(params, 'matcapAddIntensity').min(0).max(5).step(0.01).onChange((value) => bettleShaderMaterial.uniforms.uMatcapAddIntensity.value = value)
-
+gui.add(params, "grow").min(-1).max(1.5).step(0.01)
+    .onChange((value) => viceShaderMaterial.uniforms.uGrow.value = value)
+gui.add(params, "growMin").min(0).max(1).step(0.01)
+    .onChange((value) => {
+        console.log('@@@@@@@@@@');
+        viceShaderMaterial.uniforms.uGrowMin.value = value
+    })
+gui.add(params, "growMax").min(0).max(1.5).step(0.01)
+    .onChange((value) => viceShaderMaterial.uniforms.uGrowMax.value = value)
+gui.add(params, "endMin").min(0).max(1).step(0.01)
+    .onChange((value) => viceShaderMaterial.uniforms.uEndMin.value = value)
+gui.add(params, "endMax").min(0).max(1.5).step(0.01)
+    .onChange((value) => viceShaderMaterial.uniforms.uEndMax.value = value)
+gui.add(params, "expand").min(-20).max(20).step(0.001)
+    .onChange((value) => viceShaderMaterial.uniforms.uExpand.value = value)
+gui.add(params, "scale").min(-10).max(10).step(0.01)
+    .onChange((value) => viceShaderMaterial.uniforms.uScale.value = value)
 
 
 const fbxloader = new FBXLoader()
-fbxloader.load('./beetle/beetle.FBX', (model) => {
+fbxloader.load('./vice/vine2_ci3.FBX', (model) => {
+   
     model.traverse((e) => {
-        if (e.type === 'Mesh' && Array.isArray(e.material)) {
-            for (let i = 0; i < e.material.length; i++) {
-                e.material[i] = bettleShaderMaterial
-            }
+        console.log('@',e);
+        if (e.type === 'Mesh') {
+            e.material = viceShaderMaterial
         }
     })
-    model.scale.setScalar(0.01)
+    // model.scale.setScalar(0.5)
     scene.add(model)
 })
+
 
 
 /* Light */
@@ -190,7 +256,7 @@ controls.enableDamping = true
  */
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
-    antialias:true
+    antialias: true
 })
 // renderer.autoClear = false
 renderer.setSize(sizes.width, sizes.height)
