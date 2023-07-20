@@ -25,13 +25,13 @@ const params = {
     clipFactor: 0,
     matcapIntensity: 4.84,
     matcapAddIntensity: 0.67,
-    grow: 0,
-    growMin: 0.6,
-    growMax: 1.35,
-    endMin: 0.5,
-    endMax: 1.0,
-    expand: 0,
-    scale: 1.5
+    grow: -2,
+    growMin: 0.524,
+    growMax: 1.026,
+    endMin: 0.63,
+    endMax: 1.01,
+    expand: -7.39,
+    scale: 10
 
 }
 
@@ -121,14 +121,13 @@ const viceShaderMaterial = new THREE.ShaderMaterial({
     }
 })
 
-gui.add(params, "grow").min(-1).max(1.5).step(0.01)
+gui.add(params, "grow").min(-2).max(2).step(0.001)
     .onChange((value) => viceShaderMaterial.uniforms.uGrow.value = value)
-gui.add(params, "growMin").min(0).max(1).step(0.01)
+gui.add(params, "growMin").min(0).max(1).step(0.001)
     .onChange((value) => {
-        console.log('@@@@@@@@@@');
         viceShaderMaterial.uniforms.uGrowMin.value = value
     })
-gui.add(params, "growMax").min(0).max(1.5).step(0.01)
+gui.add(params, "growMax").min(0).max(1.5).step(0.001)
     .onChange((value) => viceShaderMaterial.uniforms.uGrowMax.value = value)
 gui.add(params, "endMin").min(0).max(1).step(0.01)
     .onChange((value) => viceShaderMaterial.uniforms.uEndMin.value = value)
@@ -136,7 +135,7 @@ gui.add(params, "endMax").min(0).max(1.5).step(0.01)
     .onChange((value) => viceShaderMaterial.uniforms.uEndMax.value = value)
 gui.add(params, "expand").min(-20).max(20).step(0.001)
     .onChange((value) => viceShaderMaterial.uniforms.uExpand.value = value)
-gui.add(params, "scale").min(-10).max(10).step(0.01)
+gui.add(params, "scale").min(-10).max(10).step(0.001)
     .onChange((value) => viceShaderMaterial.uniforms.uScale.value = value)
 
 

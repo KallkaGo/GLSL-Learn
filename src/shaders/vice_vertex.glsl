@@ -10,9 +10,9 @@ varying vec2 vUv;
 void main() {
   float weight_expand = smoothstep(uGrowMin, uGrowMax, (uv.y - uGrow));
   float weight_end = smoothstep(uEndMin, uEndMax, uv.y);
-  float combiend = max(weight_expand, weight_end);
-  vec3 vertex_offset = normal * uExpand * 0.01 * combiend;
-  vec3 vertex_scale = normal * uScale * 0.01;
+  float weight_combiend = max(weight_expand, weight_end);
+  vec3 vertex_offset = normalize(normal) * uExpand * 0.05 * weight_combiend;
+  vec3 vertex_scale = normalize(normal) * uScale * 0.01;
   vec3 finalOffset = vertex_offset + vertex_scale;
   vec3 pos = position + finalOffset;
 
