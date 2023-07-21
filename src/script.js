@@ -7,7 +7,7 @@ import viceVertex from './shaders/vice_vertex.glsl'
 import viceFrag from './shaders/vice_frag.glsl'
 
 
-import filmEffectFrag from './shaders/filmEffect.glsl'
+// import filmEffectFrag from './shaders/filmEffect.glsl'
 // import testFragmentShader from './shaders/fragment.glsl'
 // import fragmentShader from './shaders/fragment_1.glsl'
 // import fragmentShader from './shaders/dissolve.glsl'
@@ -124,9 +124,7 @@ const viceShaderMaterial = new THREE.ShaderMaterial({
 gui.add(params, "grow").min(-2).max(2).step(0.001)
     .onChange((value) => viceShaderMaterial.uniforms.uGrow.value = value)
 gui.add(params, "growMin").min(0).max(1).step(0.001)
-    .onChange((value) => {
-        viceShaderMaterial.uniforms.uGrowMin.value = value
-    })
+    .onChange((value) => viceShaderMaterial.uniforms.uGrowMin.value = value)
 gui.add(params, "growMax").min(0).max(1.5).step(0.001)
     .onChange((value) => viceShaderMaterial.uniforms.uGrowMax.value = value)
 gui.add(params, "endMin").min(0).max(1).step(0.01)
@@ -141,14 +139,14 @@ gui.add(params, "scale").min(-10).max(10).step(0.001)
 
 const fbxloader = new FBXLoader()
 fbxloader.load('./vice/vine2_ci3.FBX', (model) => {
-   
+
     model.traverse((e) => {
-        console.log('@',e);
+        console.log('@', e)
         if (e.type === 'Mesh') {
             e.material = viceShaderMaterial
         }
     })
-    // model.scale.setScalar(0.5)
+    model.scale.setScalar(0.5)
     scene.add(model)
 })
 
@@ -191,19 +189,19 @@ const iResolution = new THREE.Vector3(innerWidth, innerHeight, innerWidth / inne
 //     material.uniforms.iClip.value = params.clipFactor
 // })
 
-const shaderMaterial = new THREE.ShaderMaterial({
-    vertexShader,
-    fragmentShader: flowFrag,
-    uniforms: {
-        uTex: { value: null },
-        uTime: { value: 0 }
-    },
-    transparent: true,
-    blending: THREE.AdditiveBlending
-})
+// const shaderMaterial = new THREE.ShaderMaterial({
+//     vertexShader,
+//     fragmentShader: flowFrag,
+//     uniforms: {
+//         uTex: { value: null },
+//         uTime: { value: 0 }
+//     },
+//     transparent: true,
+//     blending: THREE.AdditiveBlending
+// })
 
 
-const sphereGeometry = new THREE.SphereGeometry(1)
+// const sphereGeometry = new THREE.SphereGeometry(1)
 
 // Mesh
 // const mesh = new THREE.Mesh(geometry, material)
