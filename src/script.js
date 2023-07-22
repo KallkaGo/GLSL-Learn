@@ -3,8 +3,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
 // import testVertexShader from './shaders/vertex.glsl'
 import vertexShader from './shaders/vertex.glsl'
-import viceVertex from './shaders/vice_vertex.glsl'
-import viceFrag from './shaders/vice_frag.glsl'
+import viceVertex from './shaders/vice/vice_vertex.glsl'
+import viceFrag from './shaders/vice/vice_frag.glsl'
 
 
 // import filmEffectFrag from './shaders/filmEffect.glsl'
@@ -13,7 +13,7 @@ import viceFrag from './shaders/vice_frag.glsl'
 // import fragmentShader from './shaders/dissolve.glsl'
 
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
-import flowFrag from './shaders/flowmiss.glsl'
+// import flowFrag from './shaders/flowmiss.glsl'
 
 /**
  * Base
