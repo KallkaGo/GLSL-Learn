@@ -1,3 +1,6 @@
+/* 
+藤蔓生长
+ */
 uniform float uGrowMin;
 uniform float uGrowMax;
 uniform float uEndMin;

@@ -1,3 +1,6 @@
+/* 
+薄膜效应
+ */
 uniform sampler2D uMatcap;
 uniform sampler2D uMatcapAdd;
 uniform sampler2D uDiffuse;

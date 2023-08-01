@@ -1,3 +1,6 @@
+/* 
+边缘高光
+ */
 varying vec3 normal_pos;
 varying vec3 modelToCameraDir;
 varying vec2 vUv;

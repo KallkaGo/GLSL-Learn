@@ -1,3 +1,7 @@
+/* 
+溶解特效
+ */
+
 uniform sampler2D iChannel1;
 uniform sampler2D iDissloveTex;
 uniform sampler2D iRamTex;
