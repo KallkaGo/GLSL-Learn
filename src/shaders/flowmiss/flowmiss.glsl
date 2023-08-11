@@ -12,17 +12,17 @@ void main() {
   vec3 nor = normalize(normal_pos);
   float NdotV = clamp(dot(dir, nor), 0., 1.);
   float alpha = 1. - NdotV;
-  float emiss = 3.5;
+  float emiss = 2.;
 
   float fresnel = pow(alpha, emiss);
 
-  vec3 col = vec3(1., 1., 0.);
+  vec3 col = vec3(.1, .5, 1.);
 
   vec2 nuv = vUv;
 
   float instensity = 2.;
 
-  nuv.y = fract(nuv.y + uTime * .3);
+  nuv.y = fract(nuv.y + uTime * .1);
 
   vec4 tex = texture2D(uTex, nuv);
 

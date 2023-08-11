@@ -1,19 +1,20 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
-// import testVertexShader from './shaders/vertex.glsl'
+import testVertexShader from './shaders/vertex.glsl'
 import vertexShader from './shaders/vertex.glsl'
-import viceVertex from './shaders/vice/vice_vertex.glsl'
-import viceFrag from './shaders/vice/vice_frag.glsl'
+// import viceVertex from './shaders/vice/vice_vertex.glsl'
+// import viceFrag from './shaders/vice/vice_frag.glsl'
 
 
 // import filmEffectFrag from './shaders/filmEffect.glsl'
 // import testFragmentShader from './shaders/fragment.glsl'
 // import fragmentShader from './shaders/fragment_1.glsl'
-// import fragmentShader from './shaders/dissolve.glsl'
+import fragmentShader from './shaders/disslove/dissolve.glsl'
 
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
-// import flowFrag from './shaders/flowmiss.glsl'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import flowFrag from './shaders/flowmiss/flowmiss.glsl'
 
 /**
  * Base
@@ -50,17 +51,19 @@ Loader
 */
 const textureLoader = new THREE.TextureLoader()
 
-// const texture = textureLoader.load('bg2.png')
 
-// const texture2 = textureLoader.load('test.png')
 
-// const noise = textureLoader.load('noise.png')
+const texture = textureLoader.load('bg2.png')
+
+const texture2 = textureLoader.load('test.png')
+
+const noise = textureLoader.load('noise.png')
 
 /* Disslove */
 
-// const dissolveTex = textureLoader.load('dissolveTex.png')
+const dissolveTex = textureLoader.load('/disslove/dissolveTex.png')
 
-// const RamTex = textureLoader.load('dissolveRamp.png')
+const RamTex = textureLoader.load('/disslove/dissolveRamp.png')
 
 
 /* MatCap */
@@ -102,53 +105,65 @@ const textureLoader = new THREE.TextureLoader()
 
 
 
-const Diffuse = textureLoader.load('/vice/Base_color.png')
+// const Diffuse = textureLoader.load('/vice/Base_color.png')
 
 
-const viceShaderMaterial = new THREE.ShaderMaterial({
-    vertexShader: viceVertex,
-    fragmentShader: viceFrag,
-    side: THREE.DoubleSide,
-    uniforms: {
-        uDiffuse: { value: Diffuse },
-        uGrow: { value: params.grow },
-        uGrowMin: { value: params.growMin },
-        uGrowMax: { value: params.growMax },
-        uEndMin: { value: params.endMin },
-        uEndMax: { value: params.endMax },
-        uExpand: { value: params.expand },
-        uScale: { value: params.scale },
-    }
-})
+// const viceShaderMaterial = new THREE.ShaderMaterial({
+//     vertexShader: viceVertex,
+//     fragmentShader: viceFrag,
+//     side: THREE.DoubleSide,
+//     uniforms: {
+//         uDiffuse: { value: Diffuse },
+//         uGrow: { value: params.grow },
+//         uGrowMin: { value: params.growMin },
+//         uGrowMax: { value: params.growMax },
+//         uEndMin: { value: params.endMin },
+//         uEndMax: { value: params.endMax },
+//         uExpand: { value: params.expand },
+//         uScale: { value: params.scale },
+//     }
+// })
 
-gui.add(params, "grow").min(-2).max(2).step(0.001)
-    .onChange((value) => viceShaderMaterial.uniforms.uGrow.value = value)
-gui.add(params, "growMin").min(0).max(1).step(0.001)
-    .onChange((value) => viceShaderMaterial.uniforms.uGrowMin.value = value)
-gui.add(params, "growMax").min(0).max(1.5).step(0.001)
-    .onChange((value) => viceShaderMaterial.uniforms.uGrowMax.value = value)
-gui.add(params, "endMin").min(0).max(1).step(0.01)
-    .onChange((value) => viceShaderMaterial.uniforms.uEndMin.value = value)
-gui.add(params, "endMax").min(0).max(1.5).step(0.01)
-    .onChange((value) => viceShaderMaterial.uniforms.uEndMax.value = value)
-gui.add(params, "expand").min(-20).max(20).step(0.001)
-    .onChange((value) => viceShaderMaterial.uniforms.uExpand.value = value)
-gui.add(params, "scale").min(-10).max(10).step(0.001)
-    .onChange((value) => viceShaderMaterial.uniforms.uScale.value = value)
+// gui.add(params, "grow").min(-2).max(2).step(0.001)
+//     .onChange((value) => viceShaderMaterial.uniforms.uGrow.value = value)
+// gui.add(params, "growMin").min(0).max(1).step(0.001)
+//     .onChange((value) => viceShaderMaterial.uniforms.uGrowMin.value = value)
+// gui.add(params, "growMax").min(0).max(1.5).step(0.001)
+//     .onChange((value) => viceShaderMaterial.uniforms.uGrowMax.value = value)
+// gui.add(params, "endMin").min(0).max(1).step(0.01)
+//     .onChange((value) => viceShaderMaterial.uniforms.uEndMin.value = value)
+// gui.add(params, "endMax").min(0).max(1.5).step(0.01)
+//     .onChange((value) => viceShaderMaterial.uniforms.uEndMax.value = value)
+// gui.add(params, "expand").min(-20).max(20).step(0.001)
+//     .onChange((value) => viceShaderMaterial.uniforms.uExpand.value = value)
+// gui.add(params, "scale").min(-10).max(10).step(0.001)
+//     .onChange((value) => viceShaderMaterial.uniforms.uScale.value = value)
 
 
-const fbxloader = new FBXLoader()
-fbxloader.load('./vice/vine2_ci3.FBX', (model) => {
+// const fbxloader = new FBXLoader()
+// fbxloader.load('./vice/vine2_ci3.FBX', (model) => {
 
-    model.traverse((e) => {
-        console.log('@', e)
-        if (e.type === 'Mesh') {
-            e.material = viceShaderMaterial
-        }
-    })
-    model.scale.setScalar(0.5)
-    scene.add(model)
-})
+//     model.traverse((e) => {
+//         console.log('@', e)
+//         if (e.type === 'Mesh') {
+//             e.material = viceShaderMaterial
+//         }
+//     })
+//     model.scale.setScalar(0.5)
+//     scene.add(model)
+// })
+
+// const shaderMaterial = new THREE.ShaderMaterial({
+//     vertexShader,
+//     fragmentShader: flowFrag,
+//     uniforms: {
+//         uTex: { value: noise },
+//         uTime: { value: 0 }
+//     },
+//     transparent: true,
+//     blending: THREE.AdditiveBlending
+// })
+
 
 
 
@@ -167,38 +182,42 @@ const iResolution = new THREE.Vector3(innerWidth, innerHeight, innerWidth / inne
 
 
 // Material
-// const material = new THREE.ShaderMaterial({
-//     vertexShader: testVertexShader,
-//     fragmentShader: fragmentShader,
-//     side: THREE.DoubleSide,
-//     uniforms: {
-//         uTime: { value: 0 },
-//         iTime: { value: 0 },
-//         iResolution: { value: iResolution },
-//         iChannel0: { value: null },
-//         iChannel1: { value: texture2 },
-//         iDissloveTex: { value: dissolveTex },
-//         iClip: { value: 0 },
-//         iRamTex: { value: RamTex }
-//     },
-//     transparent: true,
-//     depthWrite: false
-// })
+const material = new THREE.ShaderMaterial({
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShader,
+    // side: THREE.DoubleSide,
+    uniforms: {
+        uTime: { value: 0 },
+        iTime: { value: 0 },
+        iResolution: { value: iResolution },
+        iChannel0: { value: null },
+        iChannel1: { value: noise },
+        iDissloveTex: { value: dissolveTex },
+        iClip: { value: 0 },
+        iRamTex: { value: RamTex }
+    },
+    // transparent: true,
+    // depthWrite: false
+    transparent: true,
+    blending: THREE.AdditiveBlending
+})
 
-// gui.add(params, 'clipFactor').min(0).max(1).step(0.01).name('溶解因子').onChange(() => {
-//     material.uniforms.iClip.value = params.clipFactor
-// })
+gui.add(params, 'clipFactor').min(0).max(1).step(0.01).name('溶解因子').onChange(() => {
+    material.uniforms.iClip.value = params.clipFactor
+})
 
-// const shaderMaterial = new THREE.ShaderMaterial({
-//     vertexShader,
-//     fragmentShader: flowFrag,
-//     uniforms: {
-//         uTex: { value: null },
-//         uTime: { value: 0 }
-//     },
-//     transparent: true,
-//     blending: THREE.AdditiveBlending
-// })
+const gltfloader = new GLTFLoader()
+gltfloader.load('model.glb', (model) => {
+    model.scene.traverse((e) => {
+
+        if (e.type === 'Mesh') {
+            e.material = material
+        }
+    })
+    model.scene.scale.setScalar(0.01)
+    scene.add(model.scene)
+})
+
 
 
 // const sphereGeometry = new THREE.SphereGeometry(1)
@@ -258,7 +277,7 @@ const renderer = new THREE.WebGLRenderer({
 // renderer.autoClear = false
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-renderer.setClearColor('ivory')
+// renderer.setClearColor('ivory')
 
 /**
  * Animate
